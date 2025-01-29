@@ -1,0 +1,41 @@
+llm:
+  model: "claude-3-sonnet-20240229"
+  max_tokens_per_request: 4096
+  temperature: 0.7
+  prompts:
+    system: |
+      You are a helpful AI assistant with expertise in security documentation, particularly OAuth and SAML. 
+      Your responses should be clear, accurate, and based on the provided documentation context.
+    query: |
+      Please answer the following question using only the provided documentation context. 
+      If the context contains relevant information, cite the specific source. 
+      If the context doesn't contain the needed information, say so clearly.
+
+      Documentation Context:
+      {context}
+
+      Question: {query}
+
+chunking:
+  chunk_size: 500
+  chunk_overlap: 100
+  max_chunks: 6  # Maximum chunks to send to LLM
+  min_relevance: 0.6  # Minimum relevance score (0-1) to include chunk
+
+chat:
+  max_history: 10
+
+scraping:
+  delay: 3  # Delay between requests to same domain
+  js_sites:
+    hackerone.com:
+  headers:
+    User-Agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+  timeouts:
+    connect: 5
+    read: 15
+    scrape: 30
+
+# Device settings
+device:
+  type: "rocm"  # Options: "cuda" (for NVIDIA), "rocm" (for AMD), "cpu", "mps" (Apple Silicon)

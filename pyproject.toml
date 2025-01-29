@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bot"
+version = "0.0.1"
+
+# If you want to declare runtime dependencies here instead of requirements.txt, do:
+# dependencies = [
+#   "nltk",
+#   "requests",
+#   ...
+# ]
+
+[project.scripts]
+bot = "bot.__main__:main"
+
+[tool.setuptools]
+# Tells setuptools that "bot" is in "src/" rather than the project root
+packages = ["bot"]
+package-dir = {"" = "src"}
+
+# If you need data files in MANIFEST.in or similar, you might also set:
+# include-package-data = true

@@ -1,0 +1,11 @@
+# Desired functionality and known issues
+- [ ] Choose between web and CLI chat interface
+- [ ] Implement PDF processing
+- [ ] Duplicate URLs currently throw ChromaDB errors
+- [ ] Allow other LLM providers
+- [ ] Investigate Instructor-xl replacements, maybe some of the x5 models?
+- [ ] Add verbosity control to CLI (-v flags)
+    - [ ] Reduce default verbosity of ingest
+- [ ] Fix the verbosity of the chat session
+- [ ] Actually make a decent system prompt
+- [ ] Fiddle with chunking, token limits, etc to improve performance

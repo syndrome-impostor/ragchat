@@ -1,0 +1,17 @@
+# Core dependencies
+requests
+beautifulsoup4
+python-dotenv
+tqdm
+chromadb
+InstructorEmbedding
+transformers
+sentence-transformers
+selenium
+webdriver_manager
+nltk
+anthropic
+tenacity
+numpy
+aiohttp
+unstructured
