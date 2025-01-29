@@ -18,9 +18,6 @@ Design choices:
 - Multimodal web scraper, using Selenium for websites with a JS challenge (configure JS sites in `config.yaml`)
 
 
-
-*This was primarily built and tested on Arch Linux with an AMD GPU*
-
 # Usage
 This implementation provides:
 1. Basic HTML/md/txt processing
