@@ -17,6 +17,11 @@ Design choices:
 - Python venv for system isolation/portability
 - Multimodal web scraper, using Selenium for websites with a JS challenge (configure JS sites in `config.yaml`)
 
+System requirements:
+- Python 3
+Scraper:
+- Chrome(ish) browser for selenium
+
 
 # Usage
 This implementation provides:
@@ -25,13 +30,14 @@ This implementation provides:
 3. ChromaDB storage for vector search
 4. Chat interface (CLI for now)
 
-To use it:
-1. In the project root, create a `urls.txt` and `.env` file
+Quickstart:
+1. In the project root, create a `urls.txt` and `.env` file (example files provided)
     a. `urls.txt` should contain a newline separated list of URLs to be scraped
     b. `.env` should contain: `ANTHROPIC_API_KEY=<your_api_key>`
-2. `./run.sh scrape` to scrape documents
-3. `./run.sh ingest` to ingest documents into ChromaDB
-4. `./run.sh chat` to start a chat session
+2. Configure your GPU type in `config.yaml`
+3. `./run.sh scrape` to scrape documents
+4. `./run.sh ingest` to ingest documents into ChromaDB
+5. `./run.sh chat` to start a chat session
 
 # Troubleshooting
 - To check if documents are being ingested, run `./run.sh query` to query the vector database
@@ -44,7 +50,6 @@ To use it:
 
 To test if python is able to use GPU acceleration:
 `./test_gpu.sh`
-
 
 ## Required software packages for AMD GPUs (ROCm)
 - rocm

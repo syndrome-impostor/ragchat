@@ -4,3 +4,7 @@ __pycache__/
 .env
 data/ 
 urls.txt
+*.egg-info/
+*.egg-info/*
+build/
+dist/

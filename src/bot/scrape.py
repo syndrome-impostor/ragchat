@@ -66,19 +66,23 @@ class Scraper:
             options.add_argument(arg)
         
         try:
+            # Let webdriver_manager auto-detect Chrome version
+            from selenium.webdriver.chrome.service import Service as ChromeService
+            from webdriver_manager.chrome import ChromeDriverManager
+
             logger.info("Installing/finding Chrome driver...")
-            driver_path = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
-            logger.info(f"Chrome driver path: {driver_path}")
+            service = ChromeService(ChromeDriverManager().install())
             
             logger.info("Initializing Chrome driver...")
             self.driver = webdriver.Chrome(
-                service=Service(driver_path),
+                service=service,
                 options=options
             )
             logger.info("Chrome driver initialized successfully")
             
         except Exception as e:
             logger.error(f"Failed to initialize Chrome driver: {str(e)}")
+            logger.warning("If you're seeing version mismatch errors, try updating Chrome to the latest version")
             logger.error(f"Error type: {type(e).__name__}")
             if hasattr(e, 'msg'):
                 logger.error(f"Driver message: {e.msg}")
