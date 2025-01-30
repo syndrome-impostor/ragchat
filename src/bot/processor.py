@@ -1,4 +1,5 @@
 import logging
+import os
 from pathlib import Path
 from typing import Dict
 import nltk
@@ -13,11 +14,17 @@ class DocumentProcessor:
     """Process raw documents into clean text."""
     
     def __init__(self):
+        # Set NLTK data path to venv directory
+        venv_dir = os.environ.get('VIRTUAL_ENV')
+        if venv_dir:
+            nltk_data_dir = os.path.join(venv_dir, 'nltk_data')
+            nltk.data.path.insert(0, nltk_data_dir)
+        
         # Ensure NLTK data is available
         try:
             nltk.data.find('tokenizers/punkt')
         except LookupError:
-            nltk.download('punkt')
+            nltk.download('punkt', download_dir=nltk_data_dir if venv_dir else None)
     
     def process_document(self, content: bytes, url: str, content_type: str = None) -> Dict:
         """Process document content into clean text."""

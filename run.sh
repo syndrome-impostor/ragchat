@@ -2,13 +2,13 @@
 # Get the directory where the script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# If you want to redo the install, delete the venv folder and run this script again.
-if [ ! -d "$SCRIPT_DIR/venv" ]; then
+# If you want to redo the install, delete the .venv folder and run this script again.
+if [ ! -d "$SCRIPT_DIR/.venv" ]; then
     echo "[INFO] Creating virtual environment..."
-    python3 -m venv "$SCRIPT_DIR/venv"
-    source "$SCRIPT_DIR/venv/bin/activate"
+    python3 -m venv "$SCRIPT_DIR/.venv"
+    source "$SCRIPT_DIR/.venv/bin/activate"
 
-    if [[ "$VIRTUAL_ENV" == "$SCRIPT_DIR/venv" ]]; then
+    if [[ "$VIRTUAL_ENV" == "$SCRIPT_DIR/.venv" ]]; then
         echo "[INFO] Upgrading pip and installing base requirements..."
         python3 -m pip install --upgrade pip
         
@@ -30,7 +30,7 @@ if [ ! -d "$SCRIPT_DIR/venv" ]; then
         exit 1
     fi
 else
-    source "$SCRIPT_DIR/venv/bin/activate"
+    source "$SCRIPT_DIR/.venv/bin/activate"
 fi
 
 # Run the bot module with any provided arguments

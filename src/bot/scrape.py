@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Set
 from urllib.parse import urlparse
+import os
 
 import aiohttp
 import yaml
@@ -66,27 +67,19 @@ class Scraper:
             options.add_argument(arg)
         
         try:
-            # Let webdriver_manager auto-detect Chrome version
-            from selenium.webdriver.chrome.service import Service as ChromeService
-            from webdriver_manager.chrome import ChromeDriverManager
-
-            logger.info("Installing/finding Chrome driver...")
-            service = ChromeService(ChromeDriverManager().install())
+            manager = ChromeDriverManager(chrome_type=ChromeType.CHROMIUM)
+            driver_path = manager.install()
             
-            logger.info("Initializing Chrome driver...")
-            self.driver = webdriver.Chrome(
-                service=service,
-                options=options
-            )
-            logger.info("Chrome driver initialized successfully")
+            service = Service(driver_path)
+            self.driver = webdriver.Chrome(service=service, options=options)
+            logger.info("Chromium driver initialized successfully")
             
         except Exception as e:
-            logger.error(f"Failed to initialize Chrome driver: {str(e)}")
-            logger.warning("If you're seeing version mismatch errors, try updating Chrome to the latest version")
+            logger.error(f"Failed to initialize Chromium driver: {str(e)}")
             logger.error(f"Error type: {type(e).__name__}")
-            if hasattr(e, 'msg'):
-                logger.error(f"Driver message: {e.msg}")
-            raise RuntimeError("Could not initialize Chrome driver")
+            logger.error(f"Driver message: {str(e)}")
+            logger.debug("Full traceback:", exc_info=True)
+            raise RuntimeError("Could not initialize Chromium driver")
     
     def __del__(self):
         """Cleanup selenium."""

@@ -20,7 +20,7 @@ Design choices:
 System requirements:
 - Python 3
 Scraper:
-- Chrome(ish) browser for selenium
+- Chromium browser for selenium
 
 
 # Usage

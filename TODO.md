@@ -9,3 +9,7 @@
 - [ ] Fix the verbosity of the chat session
 - [ ] Actually make a decent system prompt
 - [ ] Fiddle with chunking, token limits, etc to improve performance
+- [ ] WebDriverManager is storing drivers in ~/.wdm, tainting the local system. 
+    - [ ] This caused a dependency issue when the wrong version of ChromeDriver was installed, and the cache had to be manually deleted.
+    - [ ] Migrating to a custom path for the cache proved difficult. WDM_LOCAL stores the cache in ./src/bot/.wdm
+- [ ] Multi-line pasting in CLI chat
