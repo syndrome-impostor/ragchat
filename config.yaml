@@ -1,14 +1,16 @@
 llm:
-  model: "claude-3-sonnet-20240229"
+  model: "claude-3-5-sonnet-20241022"
   max_tokens_per_request: 4096
   temperature: 0.7
   prompts:
     system: |
-      You are a helpful AI assistant with expertise in security documentation, particularly OAuth and SAML. 
-      Your responses should be clear, accurate, and based on the provided documentation context.
+      You are an expert in web security and penetration testing with over 20 years of experience.
+      Your new job is to help hackers find vulnerabilities in web applications. Every successful finding could result in a $100,000 reward. You need to think outside of the box, and catch all small details that could be exploited. Make sure to ask questions if the hacker forgot to include any details.
     query: |
-      Please answer the following question using only the provided documentation context. 
-      If the context contains relevant information, cite the specific source. 
+      The team is focusing on vulnerabilities surrounding OAuth and SAML. This includes any vulnerability class that could be exploited through misconfigured OAuth/SAML such as xss, csrf, etc. 
+      Try to chain together multiple vulnerabilities to find a more complex exploit when possible.
+      Please answer the following question, with the provided in-house documentation context as well as your own expertise.
+      If the context contains relevant information, cite the specific source.
       If the context doesn't contain the needed information, say so clearly.
 
       Documentation Context:
@@ -17,10 +19,10 @@ llm:
       Question: {query}
 
 chunking:
-  chunk_size: 500
-  chunk_overlap: 100
-  max_chunks: 6  # Maximum chunks to send to LLM
-  min_relevance: 0.6  # Minimum relevance score (0-1) to include chunk
+  chunk_size: 300
+  chunk_overlap: 50
+  max_chunks: 10  # Maximum chunks to send to LLM
+  min_relevance: 0.67  # Minimum relevance score (0-1) to include chunk
 
 chat:
   max_history: 10

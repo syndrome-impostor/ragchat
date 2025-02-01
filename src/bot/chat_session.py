@@ -82,17 +82,23 @@ class ChatSession:
         prompt = self.query_prompt.format(context=context or "No relevant documentation found.", query=query)
         
         # Get response from Claude
-        response = self.client.messages.create(
-            model=self.model,
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-            system=self.system_prompt,
-            messages=[
-                *[{"role": "user" if i % 2 == 0 else "assistant", "content": msg}
-                  for i, msg in enumerate(self.history)],
-                {"role": "user", "content": prompt}
-            ]
-        )
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=self.max_tokens,
+                temperature=self.temperature,
+                system=self.system_prompt,
+                messages=[
+                    *[{"role": "user" if i % 2 == 0 else "assistant", "content": msg}
+                      for i, msg in enumerate(self.history)],
+                    {"role": "user", "content": prompt}
+                ]
+            )
+        except anthropic.APIError as e:
+            logger.error(f"Anthropic API Error: {str(e)}")
+            if hasattr(e, 'response') and e.response is not None:
+                logger.error(f"Response body: {e.response.text}")
+            raise
         
         # Update history
         self.history.extend([prompt, response.content[0].text])
