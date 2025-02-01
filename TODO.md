@@ -13,3 +13,5 @@
     - [ ] This caused a dependency issue when the wrong version of ChromeDriver was installed, and the cache had to be manually deleted.
     - [ ] Migrating to a custom path for the cache proved difficult. WDM_LOCAL stores the cache in ./src/bot/.wdm
 - [ ] Multi-line pasting in CLI chat
+- [ ] Implement a config.yaml to override config defaults?
+- [ ] Figure out why it's slow to start up (~2s)
