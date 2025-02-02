@@ -59,7 +59,7 @@ def download_nltk_data():
         logger.error("NLTK not installed. Please add it to requirements.txt, then rerun.")
         sys.exit(1)
 
-    packages = ["punkt", "averaged_perceptron_tagger", "universal_tagset"]
+    packages = ["punkt", "averaged_perceptron_tagger", "averaged_perceptron_tagger_eng", "universal_tagset", "punkt_tab"]
     for pkg in packages:
         logger.info(f"Downloading NLTK package: {pkg}")
         nltk.download(pkg)
