@@ -54,4 +54,13 @@ class InstructorEmbeddingFunction(embedding_functions.EmbeddingFunction):
         
         # Generate embeddings
         embeddings = self.model.encode(texts_with_instruction)
-        return embeddings.tolist() 
+        return embeddings.tolist()
+
+    def embed_query(self, text: str) -> List[float]:
+        """Generate embedding for a single query text."""
+        if not text:
+            return []
+            
+        # Use __call__ to ensure consistent embedding generation
+        result = self.__call__([text])
+        return result[0]  # Return first (and only) embedding 

@@ -82,50 +82,39 @@ class Querier:
             print("No documents found or error accessing database.")
 
     def search(self, query: str, n_results: int = 5, verbose: bool = False) -> List[Dict]:
-        """Search the document collection."""
-        try:
-            results = self.collection.query(
-                query_texts=[query],
-                n_results=n_results
-            )
-            
-            if not results['documents'][0]:
-                print("No results found.")
-                return []
-            
-            # Process and display results
-            formatted_results = []
-            for i, (doc, meta, dist) in enumerate(zip(
-                results['documents'][0],
-                results['metadatas'][0],
-                results['distances'][0]
-            )):
-                result = {
-                    'rank': i + 1,
-                    'url': meta['url'],
-                    'chunk_index': meta['chunk_index'],
-                    'total_chunks': meta['total_chunks'],
-                    'relevance': 1 - dist,  # Convert distance to similarity score
-                    'content': doc
-                }
-                formatted_results.append(result)
-                
-                # Print result
-                print(f"\n{'-'*80}")
-                print(f"Result {i+1} (Relevance: {result['relevance']:.2%})")
+        """Search for relevant documents."""
+        # Search in vector store
+        raw_results = self.collection.query(
+            query_texts=[query],  # Pass as list of strings
+            n_results=n_results
+        )
+        
+        # Format results with metadata
+        results = []
+        for doc, meta, dist in zip(
+            raw_results['documents'][0],
+            raw_results['metadatas'][0],
+            raw_results['distances'][0]
+        ):
+            result = {
+                'url': meta['url'],
+                'chunk_index': meta['chunk_index'],
+                'total_chunks': meta['total_chunks'],
+                'relevance': 1 - dist,  # Convert distance to similarity score
+                'content': doc
+            }
+            results.append(result)
+        
+        # Show results table if verbose mode is on
+        if verbose:
+            print("\n" + "-" * 80)
+            for i, result in enumerate(results, 1):
+                print(f"Result {i} (Relevance: {result['relevance']:.2%})")
                 print(f"Source: {result['url']}")
-                if verbose:
-                    print(f"Chunk: {result['chunk_index'] + 1} of {result['total_chunks']}")
-                    print(f"\nContent:\n{result['content']}")
-                else:
-                    print(f"Content: {result['content'][:200]}...")
-            
-            return formatted_results
-            
-        except Exception as e:
-            logger.error(f"Error performing search: {e}")
-            print("Error performing search. Please check if the database exists and is not empty.")
-            return []
+                print(f"Content: {result['content'][:200]}...")  # Show first 200 chars
+                print("\n" + "-" * 80)
+        
+        return results
 
 def run_query(args=None):
     """Entry point for query functionality."""

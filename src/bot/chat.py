@@ -9,11 +9,20 @@ from prompt_toolkit.key_binding import KeyBindings
 from prompt_toolkit.keys import Keys
 import sys
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class ChatCLI:
     def __init__(self, verbose=False, very_verbose=False):
+        # Configure logging based on verbosity
+        log_level = logging.INFO if verbose else logging.WARNING
+        
+        # Configure root logger to control all module logging
+        logging.getLogger().setLevel(log_level)
+        
+        # Specifically silence the sentence-transformers and embeddings loggers unless verbose
+        logging.getLogger('sentence_transformers').setLevel(log_level)
+        logging.getLogger('bot.embeddings').setLevel(log_level)
+        
         # Load config from package location instead of current directory
         self.config = self._load_config()
         self.session = ChatSession(self.config, verbose, very_verbose)
@@ -72,13 +81,11 @@ class ChatCLI:
     
     def start(self):
         """Start the interactive chat session."""
-        print("\nWelcome to the Documentation Assistant")
         print("Type 'exit' to quit, 'help' for commands")
         if sys.platform == "darwin":
             print("Use Ctrl+V or Option+Enter for new lines, Enter to submit")
         else:
             print("Use Ctrl+V or Alt+Enter for new lines, Enter to submit")
-        print("Press Ctrl+C to exit\n")
         
         while True:
             try:
@@ -95,16 +102,20 @@ class ChatCLI:
                     self._show_help()
                     continue
                 
-                # Get response from Claude with relevant context
-                response = self.session.get_response(user_input)
-                print("\n" + response)
+                try:
+                    # Get response from Claude with relevant context
+                    response = self.session.get_response(user_input)
+                    print("\n" + response)
+                except Exception as e:
+                    logger.error(f"Error getting response: {str(e)}")
+                    print("\nSorry, there was an error getting a response. Please try again.")
                 
             except KeyboardInterrupt:
                 print("\nGoodbye!")
                 break
             except Exception as e:
                 logger.error(f"Error: {str(e)}")
-                break  # Add break to prevent infinite loop on errors
+                print("\nAn error occurred. Please try again.")
     
     def _show_help(self):
         """Show available commands."""

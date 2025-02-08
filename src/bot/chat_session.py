@@ -47,42 +47,45 @@ class ChatSession:
     @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
     def get_response(self, query: str) -> str:
         """Get response from Claude using relevant document context."""
-        # Get relevant documents
-        results = self.querier.search(
-            query, 
-            n_results=self.max_chunks,  # Use max_chunks setting
-            verbose=self.very_verbose
-        )
-        
-        context = ""
-        if not results:
-            logger.warning("No relevant documents found in the vector store")
-            if self.verbose:
-                print("\nWarning: No relevant documentation found in local storage.")
-        else:
-            # Filter results by relevance score
-            results = [r for r in results if r['relevance'] >= self.min_relevance]
-            
-            if not results:
-                logger.warning(f"Found results but none met the minimum relevance threshold of {self.min_relevance}")
-                if self.verbose:
-                    print(f"\nWarning: Found results but none met the minimum relevance threshold of {self.min_relevance}")
-            else:
-                # Build context from filtered results
-                context_parts = []
-                for r in results:
-                    source_ref = f"From {r['url']}"
-                    if self.very_verbose:
-                        source_ref += f" (chunk {r['chunk_index'] + 1}/{r['total_chunks']}, relevance: {r['relevance']:.2%})"
-                    context_parts.append(f"{source_ref}:\n{r['content']}")
-                
-                context = "\n\n".join(context_parts)
-        
-        # Format prompt with context
-        prompt = self.query_prompt.format(context=context or "No relevant documentation found.", query=query)
-        
-        # Get response from Claude
         try:
+            # Get relevant documents
+            results = self.querier.search(
+                query, 
+                n_results=self.max_chunks,
+                verbose=self.verbose  # Show all search results
+            )
+            
+            context = ""
+            if not results:
+                logger.warning("No relevant documents found in the vector store")
+                if self.verbose:
+                    print("\nWarning: No relevant documentation found in local storage.")
+            else:
+                # Filter results by relevance score
+                results = [r for r in results if r['relevance'] >= self.min_relevance]
+                
+                if not results:
+                    logger.warning(f"Found results but none met the minimum relevance threshold of {self.min_relevance}")
+                    if self.verbose:
+                        print(f"\nWarning: Found results but none met the minimum relevance threshold of {self.min_relevance}")
+                else:
+                    # Build context from filtered results
+                    context_parts = []
+                    if self.verbose:
+                        print("\nUsing chunks for context:")
+                        for i, r in enumerate(results, 1):
+                            print(f"  {i}. {r['url']} (relevance: {r['relevance']:.2%})")
+                    
+                    for r in results:
+                        source_ref = f"From {r['url']}"
+                        context_parts.append(f"{source_ref}:\n{r['content']}")
+                    
+                    context = "\n\n".join(context_parts)
+            
+            # Format prompt with context
+            prompt = self.query_prompt.format(context=context or "No relevant documentation found.", query=query)
+            
+            # Get response from Claude
             response = self.client.messages.create(
                 model=self.model,
                 max_tokens=self.max_tokens,
@@ -94,21 +97,15 @@ class ChatSession:
                     {"role": "user", "content": prompt}
                 ]
             )
-        except anthropic.APIError as e:
-            logger.error(f"Anthropic API Error: {str(e)}")
-            if hasattr(e, 'response') and e.response is not None:
-                logger.error(f"Response body: {e.response.text}")
-            raise
-        
-        # Update history
-        self.history.extend([prompt, response.content[0].text])
-        if len(self.history) > self.max_history * 2:
-            self.history = self.history[-self.max_history * 2:]
-        
-        # Format response based on verbosity
-        result = response.content[0].text
-        if self.verbose and results:
-            sources = [f"• {r['url']}" for r in results]
-            result += "\n\nSources:\n" + "\n".join(sources)
             
-        return result
+            # Update history
+            self.history.extend([prompt, response.content[0].text])
+            if len(self.history) > self.max_history * 2:
+                self.history = self.history[-self.max_history * 2:]
+            
+            return response.content[0].text
+            
+        except Exception as e:
+            logger.error(f"Error in get_response: {str(e)}")
+            logger.debug("Full traceback:", exc_info=True)
+            raise
