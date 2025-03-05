@@ -1,5 +1,5 @@
 llm:
-  model: "claude-3-5-sonnet-20241022"
+  model: "claude-3-7-sonnet-20250219"
   max_tokens_per_request: 4096
   temperature: 0.7
   prompts:
@@ -19,9 +19,9 @@ llm:
       Question: {query}
 
 chunking:
-  chunk_size: 300
-  chunk_overlap: 50
-  max_chunks: 10  # Maximum chunks to send to LLM
+  chunk_size: 800
+  chunk_overlap: 200
+  max_chunks: 15  # Maximum chunks to send to LLM
   min_relevance: 0.67  # Minimum relevance score (0-1) to include chunk
 
 chat:
@@ -40,4 +40,4 @@ scraping:
 
 # Device settings
 device:
-  type: "rocm"  # Options: "cuda" (for NVIDIA), "rocm" (for AMD), "cpu", "mps" (Apple Silicon)
+  type: "mps"  # Options: "cuda" (for NVIDIA), "rocm" (for AMD), "cpu", "mps" (Apple Silicon)
